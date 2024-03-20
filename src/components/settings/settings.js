@@ -8,8 +8,8 @@ const SettingsSlideout = styled.div`
     padding: 20px;
     border-radius: 0 10px 10px 0;
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-    z-index: 1000;
-    transform: ${(props) => props.isOpen ? "translateX(-100%)" : "translateX(0%)"};
+    z-index: 2;
+    transform: ${(props) => props.isOpen ? "translateX(0%)" : "translateX(-100%)"};
     transition: transform 0.3s ease-in-out;
 
     & label {

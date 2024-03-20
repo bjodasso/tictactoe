@@ -22,6 +22,7 @@ const StyledH2 = styled.h2`
     `;
 
 const StatusMessage = styled.div`
+    z-index: 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,7 +31,7 @@ const StatusMessage = styled.div`
     top: 0;
     bottom: 0;
     width: 100%;
-    background-color: rgba(0,0,0,0.85);
+    background-color: rgba(0,0,0,0.90);
     & h1 {
         color: #ffffff;
     }
@@ -97,9 +98,13 @@ function Layout() {
     useEffect(() => {
         const winner = calculateWinner(gameState);
         if (winner) {
-            setIsWinner(winner);
+            setTimeout(() => {
+                setIsWinner(winner);
+            }, 1000);
         } else if (!gameState.includes(null)) {
-            setIsDraw(true);
+            setTimeout(() => {
+                setIsDraw(true);
+            }, 1000);
         }
     }, [gameState]);
 

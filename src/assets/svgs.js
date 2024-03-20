@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 
 const fallOntoBoard = keyframes`
   0% {
-    transform: translateY(0%) translateX(0%) scale(8);
+    transform: translateY(0%) translateX(0%) scale(10);
     opacity: 0;
   }
   60% {
@@ -17,7 +17,7 @@ const fallOntoBoard = keyframes`
 `;
 
 const StyledSVG = styled.svg`
-  animation: ${fallOntoBoard} 0.6s;
+  animation: ${fallOntoBoard} 1s;
 `;
 
 // SVG for "X"
