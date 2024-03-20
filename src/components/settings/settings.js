@@ -1,24 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const SettingsPopup = styled.div`
+const SettingsSlideout = styled.div`
     position: absolute;
-    top: 20%;
-    right: 0;
+    top: 10%;
     background-color: white;
     padding: 20px;
-    border-radius: 10px 0 0 10px;
-    box-shadow: 0 0 10px 0 #000000;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
     z-index: 1000;
-    transform: ${(props) => props.isOpen ? "translateX(0%)" : null};
+    transform: ${(props) => props.isOpen ? "translateX(-100%)" : "translateX(0%)"};
     transition: transform 0.3s ease-in-out;
 
     & label {
         margin-left: 10px;
     }
+
+    > div {
+        margin: 0 0 10px 0;
+    }
     `;
 
-const BoardSizeDive = styled.div`
+const BoardSizeDiv = styled.div`
     display: inline-grid;
     width: 100%;
     `;
@@ -30,21 +33,24 @@ function Settings({ isOpen = true, styleOptions = {}, setStyleOptions = () => { 
     const handleChange = (e) => {
         const name = e.target.name;
         setStyleOptions({ ...styleOptions, [name]: e.target.value });
+
+        const json = JSON.stringify({ ...styleOptions, [name]: e.target.value });
+        window.localStorage.setItem('styleOptions', json);
     }
 
-    return (isOpen ? <SettingsPopup isOpen={isOpen}>
-        <BoardSizeDive>
+    return (<SettingsSlideout isOpen={isOpen}>
+        <BoardSizeDiv>
             <label for="boardSize">Board Size</label>
             <input
                 name="boardSize"
                 type="range"
                 min=".5"
-                max="3"
+                max="2"
                 step=".01"
                 class="slider"
                 value={boardSize}
                 onChange={handleChange}></input>
-        </BoardSizeDive>
+        </BoardSizeDiv>
 
         <div>
             <input type="color" name="backgroundColor" value={backgroundColor} onChange={handleChange} />
@@ -58,7 +64,7 @@ function Settings({ isOpen = true, styleOptions = {}, setStyleOptions = () => { 
             <input type="color" name="oColor" value={oColor} onChange={handleChange} />
             <label for="oColor">O Color</label>
         </div>
-    </SettingsPopup> : null
+    </SettingsSlideout>
     );
 }
 

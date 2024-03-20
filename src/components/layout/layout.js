@@ -12,7 +12,6 @@ const StyledLayout = styled.div`
 `;
 
 const StyledH1 = styled.h1`
-    margin: auto;
     text-align: center;
     font-size: 3rem;
     `;    
@@ -58,13 +57,14 @@ const ResetButton = styled.button`
     
 const Heading = styled.div`
     padding: 20px 0;
-    display: flex;
-    align-items: center;
+    text-align: center;
     `;
 
 const StyledFaCog = styled(FaCog)`
-    margin-left: 20px;
     font-size: 2rem;
+    position: absolute;
+    left: 1em;
+    top: 5%;
     `;
 
 const WINNING_CONDITIONS = [
@@ -85,7 +85,14 @@ function Layout() {
     const [isDraw, setIsDraw] = useState(false);
     const [isWinner, setIsWinner] = useState("");
     const [settingsOpen, toggleSettingsOpen] = useToggle();
-    const [styleOptions, setStyleOptions] = useState({boardSize: 2, xColor: 'black', oColor: 'black', backgroundColor: '#92e2c2'});
+    const [styleOptions, setStyleOptions] = useState({boardSize: 1, xColor: 'black', oColor: 'black', backgroundColor: '#D5DDDA'});
+
+    useEffect(() => {
+        const localStyleOptions = JSON.parse(localStorage.getItem('styleOptions'));
+        if (localStyleOptions) {
+            setStyleOptions(localStyleOptions);
+        }
+    }, []);
 
     useEffect(() => {
         const winner = calculateWinner(gameState);
@@ -129,7 +136,6 @@ function Layout() {
             <div>
                 <Heading>
                     <StyledH1>Tic Tac Toe</StyledH1>
-                    <StyledFaCog onClick={toggleSettingsOpen} style={{cursor: 'pointer'}} />
                 </Heading>
                 <StyledH2>{`Next Player: ${xTurn ? 'X' : 'O'}`}</StyledH2>
                 {isDraw || isWinner ?
@@ -139,6 +145,7 @@ function Layout() {
                 </StatusMessage> : null}
             </div>
             <Board gameState={gameState} onClick={handleClick} styleOptions={styleOptions}/>
+            <StyledFaCog onClick={toggleSettingsOpen} style={{cursor: 'pointer'}} />
             <Settings setStyleOptions={setStyleOptions} styleOptions={styleOptions} isOpen={settingsOpen}/>
         </StyledLayout>
     );

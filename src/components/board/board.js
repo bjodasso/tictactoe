@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Cell from '../cell/cell';
 import styled from 'styled-components';
 
