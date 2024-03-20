@@ -1,20 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Board from '../board/board';
+import Settings from '../settings/settings';
 import styled from 'styled-components';
+import useToggle from '../hooks/useToggle';
+import { FaCog } from 'react-icons/fa';
 
 const StyledLayout = styled.div`
     overflow: hidden;
     height: 100vh;
-    background-color: #92e2c2;
+    background-color: ${(props) => props.color ? props.color : '#92e2c2'};
 `;
 
 const StyledH1 = styled.h1`
+    margin: auto;
     text-align: center;
     font-size: 3rem;
     `;    
 
 const StyledH2 = styled.h2`
     text-align: center;
+    color: black;
+    `;
+
+const StatusMessage = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.85);
+    & h1 {
+        color: #ffffff;
+    }
+    & button {
+        background-color: #ffffff;
+        color: #000000;
+    }
+    
+    `;
+
+const ResetButton = styled.button`
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: #000000;
+    border: 2px solid #1A1A1A;
+    border-radius: 15px;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    color: #ffffff;
+    padding: 10px 20px;
+    `;
+    
+const Heading = styled.div`
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    `;
+
+const StyledFaCog = styled(FaCog)`
+    margin-left: 20px;
+    font-size: 2rem;
     `;
 
 const WINNING_CONDITIONS = [
@@ -34,16 +84,23 @@ function Layout() {
     const [xTurn, setXTurn] = useState(true);
     const [isDraw, setIsDraw] = useState(false);
     const [isWinner, setIsWinner] = useState("");
-    const [styleOptions, setStyleOptions] = useState({boardSize: 2, xColor: 'black', oColor: 'black'});
+    const [settingsOpen, toggleSettingsOpen] = useToggle();
+    const [styleOptions, setStyleOptions] = useState({boardSize: 2, xColor: 'black', oColor: 'black', backgroundColor: '#92e2c2'});
+
+    useEffect(() => {
+        const winner = calculateWinner(gameState);
+        if (winner) {
+            setIsWinner(winner);
+        } else if (!gameState.includes(null)) {
+            setIsDraw(true);
+        }
+    }, [gameState]);
 
     const handleClick = (i) => {
         const gameStateCopy = [...gameState];
-        const isWinner = calculateWinner(gameStateCopy);
-        if (isWinner || gameStateCopy[i]) {
-            setIsWinner(isWinner);
+        
+        if (calculateWinner(gameStateCopy) || gameStateCopy[i]) {
             return;
-        } else if (!gameStateCopy.includes(null)) {
-            setIsDraw(true);
         }
         gameStateCopy[i] = xTurn ? 'X' : 'O';
         setGameState(gameStateCopy);
@@ -64,15 +121,25 @@ function Layout() {
         setGameState(defaultArray);
         setXTurn(true);
         setIsDraw(false);
+        setIsWinner("");
     }
 
     return (
-        <StyledLayout>
+        <StyledLayout color={styleOptions.backgroundColor}>
             <div>
-                <StyledH1>Tic Tac Toe</StyledH1>
-                <StyledH2>{isDraw ? `It's a Draw!` : isWinner ? `Winner: ${isWinner}` : `Next Player: ${xTurn ? 'X' : 'O'}`}</StyledH2>
+                <Heading>
+                    <StyledH1>Tic Tac Toe</StyledH1>
+                    <StyledFaCog onClick={toggleSettingsOpen} style={{cursor: 'pointer'}} />
+                </Heading>
+                <StyledH2>{`Next Player: ${xTurn ? 'X' : 'O'}`}</StyledH2>
+                {isDraw || isWinner ?
+                <StatusMessage>
+                    <StyledH1>{isDraw ? `It's a Draw!` : isWinner ? `${isWinner} Wins!` : null}</StyledH1>
+                    {isDraw || isWinner ? <ResetButton onClick={resetGame}>Reset Game</ResetButton> : null}
+                </StatusMessage> : null}
             </div>
             <Board gameState={gameState} onClick={handleClick} styleOptions={styleOptions}/>
+            <Settings setStyleOptions={setStyleOptions} styleOptions={styleOptions} isOpen={settingsOpen}/>
         </StyledLayout>
     );
 }
